@@ -1,0 +1,6 @@
+paho-mqtt
+pytest
+pytest-asyncio
+Pillow
+bcrypt
+# pyaudio はプラットフォーム依存のため必要に応じてインストール
