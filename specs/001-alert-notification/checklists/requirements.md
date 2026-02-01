@@ -4,34 +4,34 @@
 **Created**: 2026-01-29
 **Feature**: [spec.md](../spec.md)
 
-## Content Quality
+## コンテンツ品質
 
-- [x] No implementation details (languages, frameworks, APIs)
-- [x] Focused on user value and business needs
-- [x] Written for non-technical stakeholders
-- [x] All mandatory sections completed
+- [x] 実装の詳細がない（言語、フレームワーク、API）
+- [x] ユーザー価値とビジネスニーズに焦点
+- [x] 非技術的なステークホルダー向けに記述
+- [x] すべての必須セクションが完成
 
-## Requirement Completeness
+## 要件の完全性
 
-- [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous
-- [x] Success criteria are measurable
-- [x] Success criteria are technology-agnostic (no implementation details)
-- [x] All acceptance scenarios are defined
-- [x] Edge cases are identified
-- [x] Scope is clearly bounded
-- [x] Dependencies and assumptions identified
+- [x] [NEEDS CLARIFICATION] マーカーが残っていない
+- [x] 要件はテスト可能で曖昧性なし
+- [x] 成功基準は測定可能
+- [x] 成功基準は技術に依存しない（実装詳細なし）
+- [x] すべての受け入れシナリオが定義されている
+- [x] エッジケースが特定されている
+- [x] スコープが明確に境界付けられている
+- [x] 依存関係と仮定が特定されている
 
-## Feature Readiness
+## 機能準備状態
 
-- [x] All functional requirements have clear acceptance criteria
-- [x] User scenarios cover primary flows (P1: 火災警報 / P2: 防犯警報 / P3: 来客通話)
-- [x] Feature meets measurable outcomes defined in Success Criteria
-- [x] No implementation details leak into specification
+- [x] すべての機能要件に明確な受け入れ基準がある
+- [x] ユーザーシナリオが主要フローをカバー（P1: 火災警報 / P2: 防犯警報 / P3: 来客通話）
+- [x] 機能は成功基準で定義された測定可能な結果を満たしている
+- [x] 実装の詳細が仕様に漏れていない
 
-## Validation Results
+## 検証結果
 
-✅ **All items PASSED** - Specification is complete and ready for planning
+✅ **すべてのアイテムが合格** - 仕様書は完全で計画準備完了
 
 ### Summary
 
@@ -41,16 +41,16 @@
 2. **Requirement Completeness**: 明確化が必要な項目（[NEEDS CLARIFICATION]）なし。全要件が測定可能かつ曖昧性なし。
 3. **Feature Readiness**: 3つのユーザーストーリー（P1/P2/P3）が独立してテスト可能で、10個のSuccess Criteriaで測定可能。
 
-### Features Validated
+### 検証済み機能
 
-- **P1: 火災警報受信・表示・警告音**: 100msec以内に表示、500msec以内に音声再生、優先度最高
-- **P2: 防犯警報受信・表示・警告音**: 100msec以内に表示、火災警報に次ぐ優先度
+- **P1: 火災警報受信・表示・警告音**: 100msec 以内に表示、500msec 以内に音声再生、優先度最高
+- **P2: 防犯警報受信・表示・警告音**: 100msec 以内に表示、火災警報に次ぐ優先度
 - **P3: 来客通話**: 警報発生時は自動保留、30秒タイムアウト設定
 
-### Constitution Compliance
+### 憲法準拠
 
-✅ **組込み制約**: レスポンス時間（100msec以下）が指定される
-✅ **信頼性最優先**: テスト駆動、監査ログ、自動復帰を要件として組込
+✅ **組み込み制約**: レスポンス時間（100msec 以下）が指定される
+✅ **信頼性最優先**: テスト駆動、監査ログ、自動復帰を要件として組み込み
 ✅ **セキュリティ**: 映像・音声暗号化、ログ記録を想定
 ✅ **優先度設計**: 火災 > 防犯 > 通話の明確な優先順序
 
