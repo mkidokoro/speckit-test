@@ -19,7 +19,10 @@
 
 - Q: システムがクラッシュ・再起動・停電した場合、待機中の警報はどうなるべきか？ → A: 待機中の警報をディスクに永続化し、再起動後に受信時刻タイムスタンプ付きで再表示する。重大な警報が失われることはない。
 - Q: 火災センサーまたは防犯センサーが応答しなくなった場合の対応は？ → A: ハートビート監視を有効化。タイムアウト後（5分間応答なし）、「センサー故障警告」を画面に表示。住人に故障を認識させる。
-- Q: 音量調整、警報クリア、ログアクセスなどの操作権限は誰が持つべきか？ → A: 住人のみ全操作可能。ゲストは警報表示閲覧のみ。ログクリア・初期化などの重要操作は PIN 4桁保護。
+- Q: 初期PINの桁数は？（4桁 vs 4～6桁 vs その他） → A: 固定4桁。
+- Q: 待機中警報の永続化に使用するストレージ形式は？（JSON vs SQLite vs 任意） → A: JSONのみ。
+- Q: 監査ログは暗号化して保存すべきか？ → A: いいえ。プレーンテキスト保存で十分。
+- Q: イベントやログのタイムスタンプ基準は？（UTC vs ローカル） → A: UTCで統一。- Q: 音量調整、警報クリア、ログアクセスなどの操作権限は誰が持つべきか？ → A: 住人のみ全操作可能。ゲストは警報表示閲覧のみ。ログクリア・初期化などの重要操作は PIN 4桁保護。
 - Q: 監査ログと診断情報をどこまで公開・アクセス可能にすべきか？ → A: ログはローカル画面でのみ閲覧可能。リモートアクセス・クラウド同期なし。完全にローカル記録。
 - Q: ネットワーク復帰後の状態同期戦略は？ → A: オンライン復帰時に「状態同期リクエスト」を送信。センサーハブから最新状態を取得し、ローカルキャッシュと同期。差分あれば画面更新。
 
@@ -130,8 +133,8 @@
 
 ### Key Entities
 
-- **Alert（警報）**: 火災警報または防犯警報。属性: alert_id, alert_type（FIRE/SECURITY）, timestamp, sensor_id, priority_level, display_color, sound_pattern
-- **Visitor Call（来客通話）**: インターフォンからの呼び出し。属性: call_id, timestamp, visitor_id, call_status（RINGING/CONNECTED/HELD/ENDED）, audio_stream
+- **Alert（警報）**: 火災警報または防犯警報。属性: alert_id, alert_type（FIRE/SECURITY）, timestamp (UTC), sensor_id, priority_level, display_color, sound_pattern
+- **Visitor Call（来客通話）**: インターフォンからの呼び出し。属性: call_id, timestamp (UTC), visitor_id, call_status（RINGING/CONNECTED/HELD/ENDED）, audio_stream
 - **Display State（ディスプレイ状態）**: 画面の現在表示状態。属性: state_type（NORMAL/FIRE_ALERT/SECURITY_ALERT/CALL）, active_alert_id, on_duration
 - **Audio Alert（警告音）**: 警報音の再生制御。属性: sound_id, sound_type（FIRE/SECURITY/CALL）, is_playing, volume_level
 - **User（ユーザー）**: 住人またはゲスト。属性: user_id, user_type（RESIDENT/GUEST）, pin_hash（住人のみ）, created_at, last_login
@@ -167,7 +170,7 @@
 **Data Persistence & Recovery（データ永続化と復旧）**
 
 - 未クリアの警報（待機中の警報）はストレージ（SSD/eMMC）に自動で永続化される
-- 永続化データ形式: JSON または SQLite。各警報の alert_id、alert_type、timestamp、priority_level を含む
+- 永続化データ形式: **JSONのみ**。各警報の alert_id、alert_type、timestamp (UTC)、priority_level を含む
 - 復旧時: システム起動時に永続化されたデータをロードし、受信時刻タイムスタンプ付きで画面に再表示
 - 復旧表示: タイトルバーに「[システム復旧]」インジケーターを表示。ユーザーが復旧状態を認識可能
 - 永続化データの有効期限: 7日間。7日以上古い警報は自動削除
@@ -189,13 +192,14 @@
 - PIN保護: ログクリア、システム初期化、ユーザー管理などの重要操作は PIN 4桁による保護
 - PIN暗号化: PIN はハッシュ化して保存（bcrypt推奨）。平文保存禁止
 - 失敗処理: PIN入力失敗時、3回失敗後に 1分間ロック。ロック中は操作不可
-- デフォルト PIN: システム初回起動時、住人が初期 PIN（4～6桁）を設定
+- デフォルト PIN: システム初回起動時、住人が初期 PIN（4桁）を設定
 
 **Audit Logging & Local Monitoring（監査ログと監視）**
 
 - ログ記録対象: 全警報イベント、通話イベント、ユーザー操作、システムイベント、センサー故障
 - ログ保存先: ローカルストレージのみ（SSD/eMMC）。クラウド同期なし、外部送信なし
-- ログ形式: JSON または SQLite。各レコードに timestamp、event_type、user_id、details を含む
+- ログ形式: **JSONのみ**。各レコードに timestamp (UTC)、event_type、user_id、details を含む
+- ログは暗号化せずプレーンテキストで保存する。機密データは含まない想定
 - ログ保有期間: **90日間**。90日以上前のログは自動削除
 - ログ容量上限: ストレージ容量の **10% 上限**。満杯時は古いログから削除
 - 住人ログ閲覧: 画面上「ログ表示」メニューで、期間指定・イベント種別フィルタで検索・閲覧可能
